@@ -2,13 +2,16 @@ package ru.yandex.practicum.filmorate;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import ru.yandex.practicum.filmorate.controller.FilmController;
 import ru.yandex.practicum.filmorate.exceptions.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 
 import java.time.LocalDate;
+import java.util.List;
 
 public class FilmValidationTest {
 
@@ -27,19 +30,24 @@ public class FilmValidationTest {
                 .duration(120)
                 .releaseDate(LocalDate.parse("1900-03-25"))
                 .build();
-        assertThrows(ValidationException.class, () -> controller.addFilm(film));
+
+        controller.addFilm(film);
+        List<Film> filmList = controller.getFilms();
+        assertEquals(0, filmList.size());
     }
 
     @Test
     public void shouldHaveShortDescription() {
         Film film = Film.builder()
                 .name("Name")
-                .description("Пятеро друзей ( комик-группа «Шарло»), приезжают в город Бризуль. Здесь они хотят разыскать господина Огюста Куглова, который задолжал им деньги, а именно 20 миллионов. о Куглов, который за время «своего отсутствия», стал кандидатом Коломбани.")
+                .description("N".repeat(201))
                 .duration(120)
                 .releaseDate(LocalDate.parse("2000-03-25"))
                 .build();
 
-        assertThrows(ValidationException.class, () -> controller.addFilm(film));
+        controller.addFilm(film);
+        List<Film> filmList = controller.getFilms();
+        assertEquals(0, filmList.size());
     }
 
     @Test
@@ -63,6 +71,8 @@ public class FilmValidationTest {
                 .releaseDate(LocalDate.parse("2000-03-25"))
                 .build();
 
-        assertThrows(ValidationException.class, () -> controller.addFilm(film));
+        controller.addFilm(film);
+        List<Film> filmList = controller.getFilms();
+        assertEquals(0, filmList.size());
     }
 }

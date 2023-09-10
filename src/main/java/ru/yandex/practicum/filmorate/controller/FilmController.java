@@ -13,6 +13,7 @@ import ru.yandex.practicum.filmorate.exceptions.UnknownException;
 import ru.yandex.practicum.filmorate.exceptions.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 
+import javax.validation.Valid;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -28,7 +29,7 @@ public class FilmController {
     public final static LocalDate MIN_RELEASE_DATE = LocalDate.parse("1895-12-28");
 
     @PostMapping
-    public Film addFilm(@RequestBody Film film) throws ValidationException {
+    public Film addFilm(@Valid @RequestBody Film film) throws ValidationException {
         if (!validateFilm(film)) {
             log.info("Произошла ошибка валидации фильма");
             throw new ValidationException("Ошибка валидации фильма");
@@ -41,11 +42,8 @@ public class FilmController {
         }
     }
 
-    private boolean validateFilm(Film film) {
-        if (film.getDuration() < 0
-                || film.getName().isEmpty()
-                || film.getDescription().length() > 200
-                || film.getReleaseDate().isBefore(MIN_RELEASE_DATE)) {
+    private boolean validateFilm(@Valid Film film) {
+        if (film.getReleaseDate().isBefore(MIN_RELEASE_DATE)) {
             return false;
         } else {
             return true;
@@ -53,7 +51,7 @@ public class FilmController {
     }
 
     @PutMapping
-    public Film updateFilm(@RequestBody Film film) throws ValidationException, UnknownException {
+    public Film updateFilm(@Valid @RequestBody Film film) throws ValidationException, UnknownException {
         if (films.containsKey(film.getId())) {
             Film previous = films.remove(film.getId());
             previous.setId(film.getId());

@@ -13,7 +13,7 @@ import ru.yandex.practicum.filmorate.exceptions.UnknownException;
 import ru.yandex.practicum.filmorate.exceptions.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 
-import java.time.LocalDate;
+import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -68,12 +68,8 @@ public class UserController {
         }
     }
 
-    private boolean validateUser(User user) {
-        if (user.getEmail().isEmpty() ||
-                !user.getEmail().contains("@")
-                || user.getLogin().isEmpty()
-                || user.getLogin().contains(" ")
-                || user.getBirthday().isAfter(LocalDate.now())) {
+    private boolean validateUser(@Valid User user) {
+        if (user.getLogin().contains(" ")) {
             return false;
         } else if (user.getName() == null || user.getName().isEmpty()) {
             user.setName(user.getLogin());
