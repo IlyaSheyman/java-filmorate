@@ -2,65 +2,69 @@ package ru.yandex.practicum.filmorate.controller;
 
 import lombok.extern.slf4j.Slf4j;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import ru.yandex.practicum.filmorate.exceptions.UnknownException;
+import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
 import ru.yandex.practicum.filmorate.exceptions.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.service.UserService;
+import ru.yandex.practicum.filmorate.storage.InMemoryUserStorage;
+import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import javax.validation.Valid;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 @RestController
+@Component
 @Slf4j
-@RequestMapping(value = "/users")
+@RequestMapping("/users")
 public class UserController {
-    private int seq;
-    public HashMap<Integer, User> users = new HashMap<>();
+
+    private final UserStorage userStorage;
+    private final UserService userService;
+
+    @Autowired
+    public UserController(InMemoryUserStorage userStorage, UserService userService) {
+        this.userStorage = userStorage;
+        this.userService = userService;
+    }
 
     @PostMapping
-    public User createUser(@RequestBody User user) throws ValidationException {
-        if (validateUser(user) == false) {
-            log.info("Ошибка валидации пользователя {}", user.getName());
-            throw new ValidationException("Ошибка валидации пользователя");
-        } else {
-            seq++;
-            user.setId(seq);
-            users.put(user.getId(), user);
-            log.info("Пользователь с id {} и именем {} успешно создан!", user.getId(), user.getName());
-        }
+    public User createUser(@RequestBody @Valid User user) throws ValidationException {
+        User created = userStorage.createUser(user);
         return user;
     }
 
     @PutMapping
-    public User updateUser(@RequestBody User user) throws ValidationException, UnknownException {
-        if (users.containsKey(user.getId())) {
-            User previous = users.remove(user.getId());
-            previous.setId(user.getId());
-            previous.setName(user.getName());
-            previous.setBirthday(user.getBirthday());
-            previous.setLogin(user.getLogin());
-            previous.setEmail(user.getEmail());
-            users.put(previous.getId(), previous);
-
-            log.info("Пользователь с id {} и именем {} успешно обновлен!", previous.getId(), previous.getName());
-        } else {
-            throw new UnknownException("Такой пользователь не добавлен");
-        }
+    public User updateUser(@RequestBody @Valid User user) throws ValidationException, NotFoundException {
+        User updated = userStorage.updateUser(user);
         return user;
     }
 
-    @GetMapping
+    @DeleteMapping("/{id}")
+    public void deleteUser(@PathVariable int id) {
+        userStorage.deleteUser(id);
+    }
+
+    @GetMapping("/{id}")
+    public User getUser(@PathVariable int id) {
+        return userStorage.getUser(id);
+    }
+
+    @GetMapping()
     public List<User> getUsers() {
-        if (!users.isEmpty()) {
-            List<User> userList = new ArrayList<>(users.values());
+        if (!userStorage.getUsers().isEmpty()) {
+            List<User> userList = new ArrayList<>(userStorage.getUsers().values());
             return userList;
         } else {
             log.info("Список пользователей пуст");
@@ -68,13 +72,23 @@ public class UserController {
         }
     }
 
-    private boolean validateUser(@Valid User user) {
-        if (user.getLogin().contains(" ")) {
-            return false;
-        } else if (user.getName() == null || user.getName().isEmpty()) {
-            user.setName(user.getLogin());
-            return true;
-        }
-        return true;
+    @PutMapping("/{id}/friends/{friendId}")
+    public User addToFriendsList(@PathVariable int id, @PathVariable int friendId) {
+        return userService.addToFriendList(id, friendId);
+    }
+
+    @DeleteMapping("/{id}/friends/{friendId}")
+    public User deleteFromFriendList(@PathVariable int id, @PathVariable int friendId) {
+        return userService.deleteFromFriendList(id, friendId);
+    }
+
+    @GetMapping("/{id}/friends")
+    public List<User> printFriends(@PathVariable int id) {
+        return userService.getFriendList(id);
+    }
+
+    @GetMapping("/{id}/friends/common/{friendId}")
+    public List<User> getCommonFriends(@PathVariable int id, @PathVariable int friendId) {
+        return userService.getCommonFriends(id, friendId);
     }
 }

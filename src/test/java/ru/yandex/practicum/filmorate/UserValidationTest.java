@@ -16,10 +16,10 @@ public class UserValidationTest {
 
     static UserController controller;
 
-    @BeforeAll()
-    public static void createController() {
-        controller = new UserController();
-    }
+//    @BeforeAll()
+//    public static void createController() {
+//        controller = new UserController(userStorage);
+//    }
 
     @Test
     public void shouldHaveEmail() {

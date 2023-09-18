@@ -17,10 +17,10 @@ public class FilmValidationTest {
 
     static FilmController controller;
 
-    @BeforeAll()
-    public static void createController() {
-         controller = new FilmController();
-    }
+//    @BeforeAll()
+//    public static void createController() {
+//         controller = new FilmController();
+//    }
 
     @Test
     public void shouldHaveNotEmptyName() throws ValidationException {
