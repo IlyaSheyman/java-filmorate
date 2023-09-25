@@ -14,8 +14,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
-import ru.yandex.practicum.filmorate.exceptions.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 
 import ru.yandex.practicum.filmorate.service.FilmService;
@@ -27,7 +25,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-@Component
 @Slf4j
 @RequestMapping(value = "/films")
 public class FilmController {
@@ -36,27 +33,27 @@ public class FilmController {
     private final FilmService filmService;
 
     @Autowired
-    public FilmController(InMemoryFilmStorage filmStorage, FilmService filmService) {
+    public FilmController(FilmStorage filmStorage, FilmService filmService) {
         this.filmStorage = filmStorage;
         this.filmService = filmService;
     }
 
     @PostMapping
-    public Film addFilm(@Valid @RequestBody Film film) throws ValidationException {
+    public Film addFilm(@Valid @RequestBody Film film) {
         Film added = filmStorage.addFilm(film);
         return added;
     }
 
     @PutMapping
-    public Film updateFilm(@Valid @RequestBody Film film) throws ValidationException, NotFoundException {
+    public Film updateFilm(@Valid @RequestBody Film film) {
         Film updated = filmStorage.updateFilm(film);
         return updated;
     }
 
     @GetMapping
     public List<Film> getFilms() {
-        if (!filmStorage.getFilms().isEmpty()) {
-            List<Film> filmList = new ArrayList<>(filmStorage.getFilms().values());
+        if (!filmService.getFilms().isEmpty()) {
+            List<Film> filmList = new ArrayList<>(filmService.getFilms().values());
             return filmList;
         } else {
             log.info("Список фильмов пуст");
@@ -74,13 +71,13 @@ public class FilmController {
         return filmStorage.deleteFilm(id);
     }
 
-    @PutMapping("/{id}/like/{userId}")
-    public Film likeFilm(@PathVariable int id, int userId) {
+    @PutMapping("{id}/like/{userId}")
+    public Film likeFilm(@PathVariable int id, @PathVariable int userId) {
         return filmService.likeFilm(id, userId);
     }
 
-    @DeleteMapping("/{id}/like/{userId}")
-    public Film deleteLike(@PathVariable int id, int userId) {
+    @DeleteMapping("{id}/like/{userId}")
+    public Film deleteLike(@PathVariable int id, @PathVariable int userId) {
         return filmService.deleteLike(id, userId);
     }
 

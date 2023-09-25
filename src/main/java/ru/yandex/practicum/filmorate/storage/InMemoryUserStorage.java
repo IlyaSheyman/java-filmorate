@@ -21,7 +21,7 @@ public class InMemoryUserStorage implements UserStorage {
     public HashMap<Integer, User> users = new HashMap<>();
 
     @Override
-    public User createUser(User user) throws ValidationException {
+    public User createUser(User user) {
         if (validateUser(user) == false) {
             log.info("Ошибка валидации пользователя {}", user.getName());
             throw new ValidationException("Ошибка валидации пользователя");
@@ -37,7 +37,7 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     @Override
-    public User updateUser(@RequestBody User user) throws ValidationException, NotFoundException {
+    public User updateUser(@RequestBody User user) {
         if (users.containsKey(user.getId())) {
             User previous = users.remove(user.getId());
             previous.setId(user.getId());

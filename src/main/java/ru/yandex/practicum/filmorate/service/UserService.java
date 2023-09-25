@@ -10,6 +10,7 @@ import ru.yandex.practicum.filmorate.storage.UserStorage;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class UserService {
@@ -58,17 +59,14 @@ public class UserService {
 
     public List<User> getCommonFriends(int id, int friendsId) {
         if (userStorage.getUsers().containsKey(id) && userStorage.getUsers().containsKey(friendsId)) {
-            List<User> commonFriends = new ArrayList<>();
-            Set<Integer> friends = userStorage.getUsers().get(id).getFriends();
 
-            if (friends != null) {
-                for (Integer current : friends) {
-                    if (userStorage.getUsers().get(friendsId).getFriends().contains(current)) {
-                        commonFriends.add(userStorage.getUsers().get(current));
-                    }
-                }
-            }
-            return commonFriends;
+            Set<Integer> friends = userStorage.getUsers().get(id).getFriends();
+            Set<Integer> otherFriends = userStorage.getUsers().get(friendsId).getFriends();
+
+            return friends.stream()
+                    .filter(otherFriends::contains)
+                    .map(userId -> userStorage.getUser(userId))
+                    .collect(Collectors.toList());
         } else {
             throw new NotFoundException("Один из пользователей не найден");
         }

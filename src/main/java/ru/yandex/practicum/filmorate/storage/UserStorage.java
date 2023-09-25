@@ -7,9 +7,9 @@ import ru.yandex.practicum.filmorate.model.User;
 import java.util.HashMap;
 
 public interface UserStorage {
-    User createUser(User user) throws ValidationException;
+    User createUser(User user);
 
-    User updateUser(User user) throws ValidationException, NotFoundException;
+    User updateUser(User user);
 
     void deleteUser(int id);
 
