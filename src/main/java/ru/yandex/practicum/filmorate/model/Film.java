@@ -28,4 +28,6 @@ public class Film {
     private int duration;
 
     private Set<Integer> likes;
+
+    private String genre;
 }
