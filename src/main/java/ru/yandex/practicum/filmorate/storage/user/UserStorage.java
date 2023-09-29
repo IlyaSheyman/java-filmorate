@@ -1,10 +1,9 @@
-package ru.yandex.practicum.filmorate.storage;
-
-import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
-import ru.yandex.practicum.filmorate.exceptions.ValidationException;
+package ru.yandex.practicum.filmorate.storage.user;
+import ru.yandex.practicum.filmorate.model.Friendship;
 import ru.yandex.practicum.filmorate.model.User;
 
 import java.util.HashMap;
+import java.util.List;
 
 public interface UserStorage {
     User createUser(User user);
@@ -16,4 +15,10 @@ public interface UserStorage {
     HashMap<Integer, User> getUsers();
 
     User getUser(int id);
+
+    List<User> getFriends(int id);
+
+    Friendship createFriendship(int id, int friendId);
+
+    User deleteFriendship(int id, int friendId);
 }
