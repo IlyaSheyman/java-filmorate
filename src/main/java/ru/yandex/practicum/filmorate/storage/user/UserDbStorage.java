@@ -24,6 +24,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Timestamp;
 import java.sql.Types;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -50,27 +51,21 @@ public class UserDbStorage implements UserStorage {
             log.info("Ошибка валидации пользователя {}", user.getName());
             throw new ValidationException("Ошибка валидации пользователя");
         } else {
-            jdbcTemplate.update(new PreparedStatementCreator() {
-                @Override
-                public PreparedStatement createPreparedStatement(Connection con) throws SQLException {
-                    PreparedStatementCreatorFactory pscf =
-                            new PreparedStatementCreatorFactory("INSERT INTO users (email, login, name, birthday) VALUES (?, ?, ?, ?)",
-                                    Types.VARCHAR,
-                                    Types.VARCHAR,
-                                    Types.VARCHAR,
-                                    Types.TIMESTAMP);
-                    pscf.setReturnGeneratedKeys(true);
+            jdbcTemplate.update(con -> {
+                PreparedStatement ps = con.prepareStatement(
+                        "INSERT INTO users (email, login, name, birthday) VALUES (?, ?, ?, ?)",
+                        Statement.RETURN_GENERATED_KEYS
+                );
+                ps.setString(1, user.getEmail());
+                ps.setString(2, user.getLogin());
+                ps.setString(3, user.getName());
+                ps.setTimestamp(4, Timestamp.valueOf(user.getBirthday().atStartOfDay()));
 
-                    PreparedStatementCreator psc =
-                            pscf.newPreparedStatementCreator(
-                                    Arrays.asList(
-                                    user.getEmail(), user.getLogin(), user.getName(), user.getBirthday())
-                            );
-                    return psc.createPreparedStatement(con);
-                }},
-                    keyHolder);
+                return ps;
+            }, keyHolder);
 
             user.setId(keyHolder.getKey().intValue());
+
             log.info("Пользователь с id {} и именем {} успешно создан!", user.getId(), user.getName());
 
             return user;

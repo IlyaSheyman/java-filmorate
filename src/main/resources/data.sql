@@ -1,4 +1,1 @@
---INSERT INTO users (name, lastName, age) VALUES ('Alice', 'White', 20);
---INSERT INTO users (name, lastName, age) VALUES ('Den', 'Black', 21);
---INSERT INTO users (name, lastName, age) VALUES ('Tom', 'Riddle', 33);
---INSERT INTO users (name, lastName, age) VALUES ('Kir', 'Bwon', 44);
+INSERT INTO users (email, login, name) VALUES ('sheiman@yandex.ru', 'sheyman', 'Ilya Sheiman');
