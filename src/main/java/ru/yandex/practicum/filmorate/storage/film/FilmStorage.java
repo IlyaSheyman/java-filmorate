@@ -1,6 +1,8 @@
 package ru.yandex.practicum.filmorate.storage.film;
 
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.FilmGenre;
+import ru.yandex.practicum.filmorate.model.FilmRating;
 import ru.yandex.practicum.filmorate.model.Like;
 
 import java.util.HashMap;
@@ -23,4 +25,12 @@ public interface FilmStorage {
     Film deleteLike(int userId, int filmId);
 
     List<Film> getPopularFilms(int count);
+
+    HashMap<Integer, String> getGenres();
+
+    FilmGenre getFilmGenre(int id);
+
+    List<FilmRating> getFilmRatings();
+
+    FilmRating getFilmRating(int id);
 }

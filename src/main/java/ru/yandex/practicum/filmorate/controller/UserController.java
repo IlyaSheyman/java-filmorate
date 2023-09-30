@@ -25,7 +25,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-@Component
 @Slf4j
 @RequestMapping("/users")
 public class UserController {
@@ -40,13 +39,13 @@ public class UserController {
     }
 
     @PostMapping
-    public User createUser(@RequestBody @Valid User user) throws ValidationException {
+    public User createUser(@RequestBody @Valid User user) {
         User created = userStorage.createUser(user);
         return user;
     }
 
     @PutMapping
-    public User updateUser(@RequestBody @Valid User user) throws ValidationException, NotFoundException {
+    public User updateUser(@RequestBody @Valid User user) {
         User updated = userStorage.updateUser(user);
         return user;
     }

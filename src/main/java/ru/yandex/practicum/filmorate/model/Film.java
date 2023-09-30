@@ -10,6 +10,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
+import java.util.List;
 
 @Builder
 @Data
@@ -29,4 +30,6 @@ public class Film {
     private int duration;
 
     private int rating;
+
+    private List<Integer> genres;
 }

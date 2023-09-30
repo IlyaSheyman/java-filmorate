@@ -13,8 +13,12 @@ import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
 import ru.yandex.practicum.filmorate.exceptions.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.FilmGenre;
+import ru.yandex.practicum.filmorate.model.FilmRating;
+import ru.yandex.practicum.filmorate.model.Friendship;
 import ru.yandex.practicum.filmorate.model.Like;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.model.enums.Genre;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -34,6 +38,7 @@ public class FilmDBStorage implements FilmStorage {
     private final JdbcTemplate jdbcTemplate;
     public final static LocalDate MIN_RELEASE_DATE = LocalDate.parse("1895-12-28");
     private HashMap<Integer, Film> films = new HashMap<>();
+    private HashMap<Integer, String> genreNames = new HashMap<>();
 
     @Autowired
     public FilmDBStorage() {
@@ -196,6 +201,53 @@ public class FilmDBStorage implements FilmStorage {
                     .rating(rs.getInt("rating_id"))
                     .build();
         });
+    }
+
+    @Override
+    public HashMap<Integer, String> getGenres() {
+        List<FilmGenre> genres = jdbcTemplate.query("SELECT * FROM genres", new RowMapper<FilmGenre>() {
+                    @Override
+                    public FilmGenre mapRow(ResultSet rs, int rowNum) throws SQLException {
+                        return new FilmGenre(rs.getInt("film_id"), rs.getInt("genre_id"));
+                    }
+                });
+        for (FilmGenre fg : genres) {
+            genreNames.put(fg.getGenreId(), fg.getGenreName(fg.getGenreId()));
+        }
+        return genreNames;
+    }
+
+    @Override
+    public FilmGenre getFilmGenre(int id) {
+        FilmGenre filmGenre = jdbcTemplate.queryForObject("SELECT * FROM genres WHERE id = ?", new RowMapper<FilmGenre>() {
+            @Override
+            public FilmGenre mapRow(ResultSet rs, int rowNum) throws SQLException {
+                return new FilmGenre(rs.getInt("film_id"), rs.getInt("genre_id"));
+            }
+        }, id);
+        return filmGenre;
+    }
+
+    @Override
+    public List<FilmRating> getFilmRatings() {
+        List<FilmRating> ratings = jdbcTemplate.query("SELECT * FROM rating", new RowMapper<FilmRating>() {
+            @Override
+            public FilmRating mapRow(ResultSet rs, int rowNum) throws SQLException {
+                return new FilmRating(rs.getInt("genre_id"));
+            }
+        });
+        return ratings;
+    }
+
+    @Override
+    public FilmRating getFilmRating(int id) {
+        FilmRating filmRating = jdbcTemplate.queryForObject("SELECT * FROM rating WHERE id = ?", new RowMapper<FilmRating>() {
+            @Override
+            public FilmRating mapRow(ResultSet rs, int rowNum) throws SQLException {
+                return new FilmRating(rs.getInt("genre_id"));
+            }
+        }, getFilms().get(id).getRating());
+        return filmRating;
     }
 
     private class FilmRowMapper implements RowMapper<Film> {

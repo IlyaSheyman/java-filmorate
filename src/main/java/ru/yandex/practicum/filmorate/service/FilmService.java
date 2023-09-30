@@ -3,16 +3,17 @@ package ru.yandex.practicum.filmorate.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+
 import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.FilmGenre;
+import ru.yandex.practicum.filmorate.model.FilmRating;
 import ru.yandex.practicum.filmorate.model.Like;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class FilmService {
@@ -54,5 +55,21 @@ public class FilmService {
 
     public HashMap<Integer, Film> getFilms() {
         return filmStorage.getFilms();
+    }
+
+    public HashMap<Integer, String> getGenres() {
+        return filmStorage.getGenres();
+    }
+
+    public FilmGenre getFilmGenre(int id) {
+        return filmStorage.getFilmGenre(id);
+    }
+
+    public List<FilmRating> getFilmRatings() {
+        return filmStorage.getFilmRatings();
+    }
+
+    public FilmRating getFilmRating(int id) {
+        return filmStorage.getFilmRating(id);
     }
 }

@@ -8,6 +8,8 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.core.PreparedStatementCreatorFactory;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
@@ -46,31 +48,61 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public User createUser(User user) {
-        KeyHolder keyHolder = new GeneratedKeyHolder();
         if (validateUser(user) == false) {
             log.info("Ошибка валидации пользователя {}", user.getName());
             throw new ValidationException("Ошибка валидации пользователя");
         } else {
-            jdbcTemplate.update(con -> {
-                PreparedStatement ps = con.prepareStatement(
-                        "INSERT INTO users (email, login, name, birthday) VALUES (?, ?, ?, ?)",
-                        Statement.RETURN_GENERATED_KEYS
-                );
-                ps.setString(1, user.getEmail());
-                ps.setString(2, user.getLogin());
-                ps.setString(3, user.getName());
-                ps.setTimestamp(4, Timestamp.valueOf(user.getBirthday().atStartOfDay()));
+            if (validateUser(user)) {
+                // Создаем экземпляр SimpleJdbcInsert
+                SimpleJdbcInsert simpleJdbcInsert = new SimpleJdbcInsert(jdbcTemplate)
+                        .withTableName("users")
+                        .usingGeneratedKeyColumns("id");
 
-                return ps;
-            }, keyHolder);
+                // Создаем параметры для вставки
+                MapSqlParameterSource parameters = new MapSqlParameterSource()
+                        .addValue("email", user.getEmail())
+                        .addValue("login", user.getLogin())
+                        .addValue("name", user.getName())
+                        .addValue("birthday", Timestamp.valueOf(user.getBirthday().atStartOfDay()));
 
-            user.setId(keyHolder.getKey().intValue());
+                Number id = simpleJdbcInsert.executeAndReturnKey(parameters);
 
-            log.info("Пользователь с id {} и именем {} успешно создан!", user.getId(), user.getName());
+                user.setId(id.intValue());
 
-            return user;
+                log.info("Пользователь с id {} и именем {} успешно создан!", user.getId(), user.getName());
+
+                return user;
+            } else {
+                log.info("Ошибка валидации пользователя {}", user.getName());
+                throw new ValidationException("Ошибка валидации пользователя");
+            }
         }
     }
+//
+//        if (validateUser(user) == false) {
+//            log.info("Ошибка валидации пользователя {}", user.getName());
+//            throw new ValidationException("Ошибка валидации пользователя");
+//        } else {
+//            KeyHolder keyHolder = new GeneratedKeyHolder();
+//            jdbcTemplate.update(con -> {
+//                PreparedStatement ps = con.prepareStatement(
+//                        "INSERT INTO users (email, login, name, birthday) VALUES (?, ?, ?, ?)",
+//                        new String[]{"id"});
+//                ps.setString(1, user.getEmail());
+//                ps.setString(2, user.getLogin());
+//                ps.setString(3, user.getName());
+//                ps.setTimestamp(4, Timestamp.valueOf(user.getBirthday().atStartOfDay()));
+//
+//                return ps;
+//            }, keyHolder);
+//
+//            user.setId(keyHolder.getKey().intValue());
+//
+//            log.info("Пользователь с id {} и именем {} успешно создан!", user.getId(), user.getName());
+//
+//            return user;
+//        }
+
 
     @Override
     public User updateUser(@RequestBody User user) {

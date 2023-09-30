@@ -28,7 +28,6 @@ import java.util.List;
 @RestController
 @Slf4j
 @RequestMapping(value = "/films")
-@Component
 public class FilmController {
 
     private final FilmStorage filmStorage;
