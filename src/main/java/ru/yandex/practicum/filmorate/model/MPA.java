@@ -14,6 +14,9 @@ public class MPA {
         this.name = getRatingName(id);
     }
 
+    public MPA() {
+    }
+
     public int getId() {
         return id;
     }

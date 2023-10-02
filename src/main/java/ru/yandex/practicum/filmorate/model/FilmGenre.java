@@ -1,6 +1,5 @@
 package ru.yandex.practicum.filmorate.model;
 
-import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import ru.yandex.practicum.filmorate.model.enums.Genre;
@@ -9,12 +8,15 @@ import ru.yandex.practicum.filmorate.model.enums.Genre;
 @Setter
 public class FilmGenre {
 
-    private int genreId;
+    private int id;
     private transient String name;
 
-    public FilmGenre(int genreId) {
-        this.genreId = genreId;
-        this.name = getGenreName(genreId);
+    public FilmGenre(int id) {
+        this.id = id;
+        this.name = getGenreName(id);
+    }
+
+    public FilmGenre() {
     }
 
     public String getGenreName(int id) {

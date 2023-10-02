@@ -30,5 +30,5 @@ public class Film {
     private int rate = 0;
     private MPA mpa;
 
-    private List<Integer> genres = List.of();
+    private List<FilmGenre> genres;
 }
