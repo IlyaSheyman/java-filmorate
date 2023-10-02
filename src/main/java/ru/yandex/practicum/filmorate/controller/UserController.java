@@ -62,13 +62,8 @@ public class UserController {
 
     @GetMapping()
     public List<User> getUsers() {
-        if (!userStorage.getUsers().isEmpty()) {
-            List<User> userList = new ArrayList<>(userStorage.getUsers().values());
-            return userList;
-        } else {
-            log.info("Список пользователей пуст");
-            return new ArrayList<>();
-        }
+        List<User> userList = new ArrayList<>(userStorage.getUsers().values());
+        return userList;
     }
 
     @PutMapping("/{id}/friends/{friendId}")

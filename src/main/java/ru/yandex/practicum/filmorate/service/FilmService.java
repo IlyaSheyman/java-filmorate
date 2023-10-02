@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.FilmGenre;
-import ru.yandex.practicum.filmorate.model.FilmRating;
+import ru.yandex.practicum.filmorate.model.MPA;
 import ru.yandex.practicum.filmorate.model.Like;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
@@ -57,7 +57,7 @@ public class FilmService {
         return filmStorage.getFilms();
     }
 
-    public HashMap<Integer, String> getGenres() {
+    public List<FilmGenre> getGenres() {
         return filmStorage.getGenres();
     }
 
@@ -65,11 +65,11 @@ public class FilmService {
         return filmStorage.getFilmGenre(id);
     }
 
-    public List<FilmRating> getFilmRatings() {
+    public List<MPA> getFilmRatings() {
         return filmStorage.getFilmRatings();
     }
 
-    public FilmRating getFilmRating(int id) {
+    public MPA getFilmRating(int id) {
         return filmStorage.getFilmRating(id);
     }
 }

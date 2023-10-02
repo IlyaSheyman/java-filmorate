@@ -8,12 +8,11 @@ import ru.yandex.practicum.filmorate.model.enums.Genre;
 @Getter
 @Setter
 public class FilmGenre {
-    private int filmId;
-    private int genreId;
-    private String name;
 
-    public FilmGenre(int filmId, int genreId) {
-        this.filmId = filmId;
+    private int genreId;
+    private transient String name;
+
+    public FilmGenre(int genreId) {
         this.genreId = genreId;
         this.name = getGenreName(genreId);
     }
@@ -25,11 +24,13 @@ public class FilmGenre {
             case(2):
                 return Genre.DRAMA.getGenre();
             case(3):
-                return Genre.SHOOTER.getGenre();
+                return Genre.CARTOON.getGenre();
             case(4):
                 return Genre.TRILLER.getGenre();
             case(5):
-                return Genre.CARTOON.getGenre();
+                return Genre.DOCUMENTAL.getGenre();
+            case(6):
+                return Genre.SHOOTER.getGenre();
         }
         return null;
     }

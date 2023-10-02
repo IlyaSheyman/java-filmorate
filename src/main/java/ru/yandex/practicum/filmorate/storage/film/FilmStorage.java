@@ -2,7 +2,7 @@ package ru.yandex.practicum.filmorate.storage.film;
 
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.FilmGenre;
-import ru.yandex.practicum.filmorate.model.FilmRating;
+import ru.yandex.practicum.filmorate.model.MPA;
 import ru.yandex.practicum.filmorate.model.Like;
 
 import java.util.HashMap;
@@ -26,11 +26,11 @@ public interface FilmStorage {
 
     List<Film> getPopularFilms(int count);
 
-    HashMap<Integer, String> getGenres();
+    List<FilmGenre> getGenres();
 
     FilmGenre getFilmGenre(int id);
 
-    List<FilmRating> getFilmRatings();
+    List<MPA> getFilmRatings();
 
-    FilmRating getFilmRating(int id);
+    MPA getFilmRating(int id);
 }

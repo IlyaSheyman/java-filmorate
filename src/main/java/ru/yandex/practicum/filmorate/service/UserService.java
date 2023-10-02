@@ -23,7 +23,7 @@ public class UserService {
     public User addToFriendList(int id, int friendId) {
         if (userStorage.getUsers().containsKey(id) && userStorage.getUsers().containsKey(friendId)) {
             userStorage.createFriendship(id, friendId);
-            return null;
+            return userStorage.getUser(id);
         } else {
             throw new NotFoundException("Один из пользователей не найден");
         }

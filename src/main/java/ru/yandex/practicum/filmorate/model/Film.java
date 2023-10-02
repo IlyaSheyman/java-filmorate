@@ -2,8 +2,6 @@ package ru.yandex.practicum.filmorate.model;
 
 import lombok.Builder;
 import lombok.Data;
-import ru.yandex.practicum.filmorate.model.enums.Genre;
-import ru.yandex.practicum.filmorate.model.enums.Rating;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
@@ -29,7 +27,8 @@ public class Film {
     @Min(1)
     private int duration;
 
-    private int rating;
+    private int rate = 0;
+    private MPA mpa;
 
-    private List<Integer> genres;
+    private List<Integer> genres = List.of();
 }

@@ -2,16 +2,14 @@ package ru.yandex.practicum.filmorate.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import ru.yandex.practicum.filmorate.model.FilmRating;
+import ru.yandex.practicum.filmorate.model.MPA;
 import ru.yandex.practicum.filmorate.service.FilmService;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 
-import java.util.HashMap;
 import java.util.List;
 
 @RestController
@@ -28,12 +26,12 @@ public class RatingController {
     }
 
     @GetMapping
-    public List<FilmRating> getFilmRatings() {
+    public List<MPA> getFilmRatings() {
         return filmService.getFilmRatings();
     }
 
     @GetMapping("{id}") // приходит идентификатор фильма
-    public FilmRating getFilmRating(@PathVariable int id) {
+    public MPA getFilmRating(@PathVariable int id) {
         return filmService.getFilmRating(id);
     }
 }
